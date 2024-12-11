@@ -36,7 +36,7 @@ const SavedAddresses = () => {
 
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}address/delete/${id}`,
+        `${import.meta.env.VITE_BACKEND_URL}/address/delete/${id}`,
         {
           method: "DELETE",
         }
