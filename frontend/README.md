@@ -42,7 +42,7 @@ Before running the project, ensure that you have the following installed:
 1. Clone the repository:
    ```bash
    git clone https://github.com/nikhiltelase/Location-Based-Delivery-System.git
-   cd Location-Based-Delivery-System
+   cd Location-Based-Delivery-System/frontend
    ```
 
 2. Install dependencies:
@@ -130,4 +130,4 @@ This project is licensed under the [MIT License](LICENSE).
 
 ---
 
-If you encounter any issues or have suggestions, feel free to [create an issue](https://github.com/your-repo/location-delivery-frontend/issues) in the repository.
+If you encounter any issues or have suggestions, feel free to ask me.
