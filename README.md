@@ -141,14 +141,5 @@ This project is licensed under the [MIT License](LICENSE).
 - **Google Maps API**: For map and geolocation services.
 - **TailwindCSS**: For the amazing utility-first CSS framework.
 
-If you encounter any issues or have suggestions, feel free to [create an issue](https://github.com/your-repo/location-delivery-frontend/issues).
-```
+If you encounter any issues or have suggestions, feel free to contact.
 
-### Key Sections:
-1. **Installation**: Instructions for setting up both the frontend and backend.
-2. **Project Structure**: Directory layout for both parts of the project.
-3. **API Routes**: A summary of the available backend routes.
-4. **Available Scripts**: Common commands for running and building both the frontend and backend.
-5. **Future Enhancements**: Potential improvements for the project.
-
-This combined README simplifies the setup and provides both frontend and backend instructions in a concise format. Adjust the repository URLs and details as per your project specifics.
