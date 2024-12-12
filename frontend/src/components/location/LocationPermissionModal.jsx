@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { MapPin, AlertCircle, Navigation, Compass } from "lucide-react";
-import { useLocation } from "../contexts/LocationContext";
+import { useLocation } from "../../contexts/LocationContext";
 
 const LocationPermissionModal = () => {
   const { requestLocation, locationPermission, setLocationPermission } =

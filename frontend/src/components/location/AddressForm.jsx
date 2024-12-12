@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-import { useLocation } from "../contexts/LocationContext";
+import { useLocation } from "../../contexts/LocationContext";
 import { useNavigate } from "react-router-dom";
 import { Map, MapPin, Home, Briefcase, Users, CheckCircle } from "lucide-react";
 

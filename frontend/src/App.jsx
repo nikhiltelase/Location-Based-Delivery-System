@@ -1,12 +1,14 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import ProductList from "./components/ProductList";
-import ProductDetails from "./components/ProductDetails";
-import LocationModal from "./components/LocationModal";
+import ProductDetails from "./pages/ProductDetails";
+import LocationModal from "./pages/LocationModal";
 import { LocationProvider } from "./contexts/LocationContext";
-import SavedAddresses from "./components/SavedAddresses";
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
+import Navbar from "./components/layout/Navbar";
+import Footer from "./components/layout/Footer";
+import Cart from "./pages/CartPage";
+import ProfilePage from "./pages/ProfilePage";
+import Home from "./pages/Home";
+import SavedAddresses from "./components/profile/SavedAddresses";
 
 const App = () => {
   return (
@@ -14,9 +16,11 @@ const App = () => {
       <Router>
         <Navbar />
         <Routes>
-          <Route path="/" element={<ProductList />} />
+          <Route path="/" element={<Home />} />
           <Route path="/product/:id" element={<ProductDetails />} />
           <Route path="/order" element={<LocationModal />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/profile" element={<ProfilePage />} />
           <Route path="/saved-addresses" element={<SavedAddresses />} />
         </Routes>
         <Footer />

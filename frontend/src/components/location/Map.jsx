@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useLocation } from "../contexts/LocationContext";
 import { GoogleMap, Marker, Autocomplete } from "@react-google-maps/api";
 import {
   MapPin,
@@ -8,7 +7,8 @@ import {
   XCircle,
   AlertTriangle,
 } from "lucide-react";
-import useGoogleMapsScript from "../hooks/useGoogleMapsScript";
+import useGoogleMapsScript from "../../hooks/useGoogleMapsScript";
+import { useLocation } from "../../contexts/LocationContext";
 
 const MapSkeleton = () => {
   return (

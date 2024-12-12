@@ -1,7 +1,7 @@
 import React from "react";
-import Map from "./Map";
-import AddressForm from "./AddressForm";
-import LocationPermissionModal from "./LocationPermissionModal";
+import Map from "../components/location/Map";
+import AddressForm from "../components/location/AddressForm";
+import LocationPermissionModal from "../components/location/LocationPermissionModal";
 import { useLocation } from "../contexts/LocationContext";
 import { MapPin, Navigation } from "lucide-react";
 

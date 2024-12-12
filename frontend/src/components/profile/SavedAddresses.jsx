@@ -5,7 +5,7 @@ import { Trash2, Edit2 } from "lucide-react";
 
 const AddressSkeletonLoader = () => {
   return (
-    <div className="p-4 border rounded-md shadow-sm bg-white animate-pulse">
+    <div className="p-4 border rounded-md mt-16 shadow-sm bg-white animate-pulse">
       <div className="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
       <div className="space-y-2">
         {[1, 2, 3].map((item) => (
@@ -89,7 +89,7 @@ const SavedAddresses = () => {
 
   if (loading) {
     return (
-      <div className="p-4">
+      <div className="p-4 mt-16">
         <h3 className="text-lg font-semibold mb-4">Saved Addresses</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {[1, 2, 3].map((loader) => (
@@ -102,7 +102,7 @@ const SavedAddresses = () => {
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[300px] text-center">
+      <div className="flex flex-col items-center justify-center min-h-[300px] text-center mt-16">
         <img 
           src="/api/placeholder/400/200" 
           alt="Error" 
@@ -117,7 +117,7 @@ const SavedAddresses = () => {
 
   if (addresses.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[300px] text-center">
+      <div className="flex flex-col items-center justify-center min-h-[300px] text-center mt-16">
         <img 
           src="/api/placeholder/400/200" 
           alt="No Addresses" 
@@ -131,7 +131,7 @@ const SavedAddresses = () => {
   }
 
   return (
-    <div className="p-4">
+    <div className="p-14 mt-16">
       <ToastContainer />
       <h3 className="text-lg font-semibold mb-4">Saved Addresses</h3>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
