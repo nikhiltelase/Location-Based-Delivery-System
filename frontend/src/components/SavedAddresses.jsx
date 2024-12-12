@@ -1,12 +1,32 @@
 import React, { useEffect, useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+import { Trash2, Edit2 } from "lucide-react";
+
+const AddressSkeletonLoader = () => {
+  return (
+    <div className="p-4 border rounded-md shadow-sm bg-white animate-pulse">
+      <div className="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
+      <div className="space-y-2">
+        {[1, 2, 3].map((item) => (
+          <div key={item} className="h-3 bg-gray-200 rounded w-3/4"></div>
+        ))}
+        <div className="flex space-x-2 mt-4">
+          <div className="h-8 bg-gray-200 rounded w-1/2"></div>
+          <div className="h-8 bg-gray-200 rounded w-1/2"></div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const SavedAddresses = () => {
-  const [addresses, setAddresses] = useState([]); // State to store fetched addresses
-  const [loading, setLoading] = useState(true); // Loading state
-  const [error, setError] = useState(null); // Error state
+  const [addresses, setAddresses] = useState([]); 
+  const [loading, setLoading] = useState(true); 
+  const [error, setError] = useState(null); 
+  const [deletingId, setDeletingId] = useState(null);
 
   useEffect(() => {
-    // Fetch addresses from the backend
     const fetchAddresses = async () => {
       try {
         const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/address/get`);
@@ -16,25 +36,24 @@ const SavedAddresses = () => {
         }
 
         const data = await response.json();
-        setAddresses(data); // Update state with fetched addresses
+        setAddresses(data);
       } catch (err) {
-        setError(err.message); // Set error message
+        setError(err.message);
+        toast.error(`Failed to load addresses: ${err.message}`, {
+          position: "top-right",
+          autoClose: 3000,
+        });
       } finally {
-        setLoading(false); // Turn off loading state
+        setLoading(false);
       }
     };
 
     fetchAddresses();
   }, []);
 
-  // Handle delete address
   const handleDelete = async (id) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this address?"
-    );
-    if (!confirmDelete) return;
-
     try {
+      setDeletingId(id);
       const response = await fetch(
         `${import.meta.env.VITE_BACKEND_URL}/address/delete/${id}`,
         {
@@ -46,67 +65,128 @@ const SavedAddresses = () => {
         throw new Error("Failed to delete address");
       }
 
-      // Update state after successful deletion
       setAddresses((prev) => prev.filter((address) => address._id !== id));
-      alert("Address deleted successfully!");
+      toast.success("Address deleted successfully!", {
+        position: "top-right",
+        autoClose: 3000,
+      });
     } catch (err) {
-      alert("Error deleting address: " + err.message);
+      toast.error(`Error deleting address: ${err.message}`, {
+        position: "top-right",
+        autoClose: 3000,
+      });
+    } finally {
+      setDeletingId(null);
     }
   };
 
+  const handleEdit = (address) => {
+    toast.info("Edit functionality coming soon!", {
+      position: "top-right",
+      autoClose: 2000,
+    });
+  };
+
   if (loading) {
-    return <p className="text-center text-gray-500">Loading addresses...</p>;
+    return (
+      <div className="p-4">
+        <h3 className="text-lg font-semibold mb-4">Saved Addresses</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {[1, 2, 3].map((loader) => (
+            <AddressSkeletonLoader key={loader} />
+          ))}
+        </div>
+      </div>
+    );
   }
 
   if (error) {
-    return <p className="text-center text-red-500">Error: {error}</p>;
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[300px] text-center">
+        <img 
+          src="/api/placeholder/400/200" 
+          alt="Error" 
+          className="mb-4 opacity-50"
+        />
+        <p className="text-red-500 text-lg">
+          Failed to load addresses. Please try again later.
+        </p>
+      </div>
+    );
   }
 
   if (addresses.length === 0) {
     return (
-      <p className="text-center text-gray-500">No saved addresses found.</p>
+      <div className="flex flex-col items-center justify-center min-h-[300px] text-center">
+        <img 
+          src="/api/placeholder/400/200" 
+          alt="No Addresses" 
+          className="mb-4 opacity-50"
+        />
+        <p className="text-gray-500 text-lg">
+          No saved addresses found. Add your first address!
+        </p>
+      </div>
     );
   }
 
   return (
     <div className="p-4">
+      <ToastContainer />
       <h3 className="text-lg font-semibold mb-4">Saved Addresses</h3>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {addresses.map((address) => (
           <div
             key={address._id}
-            className="p-4 border rounded-md shadow-sm bg-white"
+            className="p-4 border rounded-md shadow-sm bg-white relative"
           >
-            <h4 className="font-medium mb-2 capitalize">
-              {address.type}{" "}
-              {address.isFavorite && <span className="text-yellow-500">★</span>}
-            </h4>
-            <p className="text-sm text-gray-700">
-              <strong>Flat/Block:</strong> {address.flatNumber}
-            </p>
-            <p className="text-sm text-gray-700">
-              <strong>Area:</strong> {address.area}
-            </p>
-            {address.landmark && (
-              <p className="text-sm text-gray-700">
-                <strong>Landmark:</strong> {address.landmark}
-              </p>
+            {address.isFavorite && (
+              <span className="absolute top-2 right-2 text-yellow-500 text-xl">
+                ★
+              </span>
             )}
-            <p className="text-sm text-gray-700">
-              <strong>Location:</strong> {address.location.lat.toFixed(6)},{" "}
-              {address.location.lng.toFixed(6)}
-            </p>
-            <div className="flex space-x-2 mt-4">
+            <h4 className="font-medium mb-2 capitalize">
+              {address.type}
+            </h4>
+            <div className="space-y-1 mb-4">
+              <p className="text-sm text-gray-700">
+                <strong>Flat/Block:</strong> {address.flatNumber}
+              </p>
+              <p className="text-sm text-gray-700">
+                <strong>Area:</strong> {address.area}
+              </p>
+              {address.landmark && (
+                <p className="text-sm text-gray-700">
+                  <strong>Landmark:</strong> {address.landmark}
+                </p>
+              )}
+              <p className="text-sm text-gray-700">
+                <strong>Location:</strong> {address.location.lat.toFixed(6)},{" "}
+                {address.location.lng.toFixed(6)}
+              </p>
+            </div>
+            <div className="flex space-x-2">
               <button
                 onClick={() => handleDelete(address._id)}
-                className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+                disabled={deletingId === address._id}
+                className="flex-1 flex items-center justify-center bg-red-500 text-white px-3 py-2 rounded 
+                  hover:bg-red-600 transition-colors duration-200 disabled:opacity-50"
               >
-                Delete
+                {deletingId === address._id ? (
+                  <div className="animate-spin h-5 w-5 border-b-2 border-white rounded-full"></div>
+                ) : (
+                  <>
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    Delete
+                  </>
+                )}
               </button>
               <button
-                className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
-                onClick={() => alert("Edit functionality not implemented yet")}
+                onClick={() => handleEdit(address)}
+                className="flex-1 flex items-center justify-center bg-blue-500 text-white px-3 py-2 rounded 
+                  hover:bg-blue-600 transition-colors duration-200"
               >
+                <Edit2 className="mr-2 h-4 w-4" />
                 Edit
               </button>
             </div>

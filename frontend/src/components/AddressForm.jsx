@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 import { useLocation } from "../contexts/LocationContext";
 import { useNavigate } from "react-router-dom";
 
@@ -12,6 +14,7 @@ const AddressForm = () => {
     flatNumber: "",
   });
   const [type, setType] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -22,13 +25,21 @@ const AddressForm = () => {
   };
 
   const handleSaveAddress = async () => {
+    // Validate required fields
     if (
       !addressDetails.flatNumber ||
       !addressDetails.area ||
       !selectedLocation ||
       !type
     ) {
-      alert("Please fill in all required fields.");
+      toast.error("Please fill in all required fields.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
       return;
     }
 
@@ -40,7 +51,9 @@ const AddressForm = () => {
         lng: selectedLocation.lng,
       },
     };
-    console.log(body);
+
+    setIsLoading(true);
+
     try {
       const response = await fetch(
         `${import.meta.env.VITE_BACKEND_URL}/address/create`,
@@ -54,16 +67,42 @@ const AddressForm = () => {
       );
 
       if (response.ok) {
-        alert("Address saved successfully!");
-        setAddressDetails({ area: "", landmark: "", flatNumber: "", type: "" });
-        setType("");
-        navigate("/saved-addresses");
+        toast.success("Address saved successfully!", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          onClose: () => {
+            setAddressDetails({ area: "", landmark: "", flatNumber: "", type: "" });
+            setType("");
+            navigate("/saved-addresses");
+          }
+        });
       } else {
-        alert("Failed to save address. Please try again.");
+        const errorData = await response.json();
+        toast.error(errorData.message || "Failed to save address. Please try again.", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
       }
     } catch (error) {
       console.error("Error saving address:", error);
-      alert("An error occurred while saving the address.");
+      toast.error("An error occurred while saving the address.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -74,7 +113,8 @@ const AddressForm = () => {
   ];
 
   return (
-    <div className="container mx-auto max-w-md px-2 py-6 sm:p-6">
+    <div className="container mx-auto max-w-md px-2 py-6 sm:p-6 relative">
+      <ToastContainer />
       <div className="bg-white shadow-md rounded-lg p-2 space-y-6">
         {/* House/Flat/Block Number */}
         <div>
@@ -87,9 +127,11 @@ const AddressForm = () => {
             value={addressDetails.flatNumber || ""}
             onChange={handleInputChange}
             placeholder="Enter house/flat number"
+            disabled={isLoading}
             className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm 
               focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 
-              transition-all duration-200 ease-in-out"
+              transition-all duration-200 ease-in-out
+              disabled:opacity-50 disabled:cursor-not-allowed"
           />
         </div>
 
@@ -104,9 +146,11 @@ const AddressForm = () => {
             value={addressDetails.area || ""}
             onChange={handleInputChange}
             placeholder="Enter apartment, road, area"
+            disabled={isLoading}
             className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm 
               focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 
-              transition-all duration-200 ease-in-out"
+              transition-all duration-200 ease-in-out
+              disabled:opacity-50 disabled:cursor-not-allowed"
           />
         </div>
 
@@ -121,9 +165,11 @@ const AddressForm = () => {
             value={addressDetails.landmark || ""}
             onChange={handleInputChange}
             placeholder="Enter nearby landmark"
+            disabled={isLoading}
             className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm 
               focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 
-              transition-all duration-200 ease-in-out"
+              transition-all duration-200 ease-in-out
+              disabled:opacity-50 disabled:cursor-not-allowed"
           />
         </div>
 
@@ -137,14 +183,16 @@ const AddressForm = () => {
               <button
                 key={item.name}
                 type="button"
-                onClick={() => setType(item.name.toLowerCase())}
+                onClick={() => !isLoading && setType(item.name.toLowerCase())}
+                disabled={isLoading}
                 className={`flex flex-col items-center justify-center p-3 rounded-md border 
                   transition-all duration-200 ease-in-out
                   ${
                     type === item.name.toLowerCase()
                       ? "bg-blue-500 text-white border-blue-600 shadow-md"
                       : "bg-gray-100 text-gray-700 hover:bg-gray-200 border-gray-300"
-                  }`}
+                  }
+                  disabled:opacity-50 disabled:cursor-not-allowed`}
               >
                 <span className="text-2xl mb-1">{item.icon}</span>
                 <span className="text-sm font-medium">{item.name}</span>
@@ -156,13 +204,17 @@ const AddressForm = () => {
         {/* Save Address Button */}
         <button
           onClick={handleSaveAddress}
-          disabled={!type}
+          disabled={!type || isLoading}
           className="w-full bg-green-500 text-white py-3 rounded-md 
             hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2
             disabled:opacity-50 disabled:cursor-not-allowed
-            transition-all duration-200 ease-in-out"
+            transition-all duration-200 ease-in-out
+            flex items-center justify-center"
         >
-          Save Address
+          {isLoading ? (
+            <div className="animate-spin mr-2 h-5 w-5 border-b-2 border-white rounded-full"></div>
+          ) : null}
+          {isLoading ? "Saving..." : "Save Address"}
         </button>
       </div>
     </div>
