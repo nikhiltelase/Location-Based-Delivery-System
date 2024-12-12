@@ -183,8 +183,8 @@ const SavedAddresses = () => {
               </button>
               <button
                 onClick={() => handleEdit(address)}
-                className="flex-1 flex items-center justify-center bg-blue-500 text-white px-3 py-2 rounded 
-                  hover:bg-blue-600 transition-colors duration-200"
+                className="flex-1 flex items-center justify-center bg-green-500 text-white px-3 py-2 rounded 
+                  hover:bg-green-600 transition-colors duration-200"
               >
                 <Edit2 className="mr-2 h-4 w-4" />
                 Edit

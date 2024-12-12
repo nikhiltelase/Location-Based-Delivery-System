@@ -1,11 +1,20 @@
-import React, { useState } from "react";
-import { MapPin, AlertCircle } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { MapPin, AlertCircle, Navigation, Compass } from "lucide-react";
 import { useLocation } from "../contexts/LocationContext";
 
 const LocationPermissionModal = () => {
   const { requestLocation, locationPermission, setLocationPermission } =
     useLocation();
   const [isLoading, setIsLoading] = useState(false);
+  const [animationClass, setAnimationClass] = useState("opacity-0 scale-95");
+
+  // Animate modal entry
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setAnimationClass("opacity-100 scale-100");
+    }, 50);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Only show modal when permission is not granted or manual
   if (locationPermission === "granted" || locationPermission === "manual") {
@@ -30,25 +39,34 @@ const LocationPermissionModal = () => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-auto transform transition-all duration-300 ease-in-out">
+    <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4 overflow-hidden">
+      <div 
+        className={`
+          bg-white rounded-2xl shadow-2xl max-w-md w-full mx-auto 
+          transform transition-all duration-300 ease-in-out
+          ${animationClass}
+        `}
+      >
         {/* Modal Content */}
         <div className="p-6 md:p-8 space-y-6">
           {/* Header Section */}
           <div className="text-center">
             <div className="flex justify-center mb-4">
-              <div className="bg-blue-100 rounded-full p-4 md:p-6">
+              <div className="bg-green-100 rounded-full p-4 md:p-6 
+                animate-pulse-subtle">
                 <MapPin
-                  className="h-12 w-12 md:h-16 md:w-16 text-blue-500"
+                  className="h-12 w-12 md:h-16 md:w-16 text-green-500"
                   strokeWidth={1.5}
                 />
               </div>
             </div>
 
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2 
+              animate-slide-up-subtle">
               Location Access
             </h2>
-            <p className="text-sm md:text-base text-gray-600">
+            <p className="text-sm md:text-base text-gray-600 
+              animate-slide-up-subtle delay-100">
               Help us find the best delivery options near you
             </p>
           </div>
@@ -60,10 +78,11 @@ const LocationPermissionModal = () => {
               onClick={handleEnableLocation}
               disabled={isLoading}
               className="w-full flex items-center justify-center 
-                bg-blue-500 text-white py-3 rounded-lg 
-                hover:bg-blue-600 transition duration-300 
-                focus:outline-none focus:ring-2 focus:ring-blue-400 
-                disabled:opacity-50 disabled:cursor-not-allowed"
+                bg-green-500 text-white py-3 rounded-lg 
+                hover:bg-green-600 transition duration-300 
+                focus:outline-none focus:ring-2 focus:ring-green-400 
+                disabled:opacity-50 disabled:cursor-not-allowed
+                animate-slide-up-subtle delay-200"
             >
               {isLoading ? (
                 <>
@@ -91,7 +110,7 @@ const LocationPermissionModal = () => {
                 </>
               ) : (
                 <>
-                  <navigation className="mr-2" size={20} />
+                  <Compass className="mr-2" size={20} />
                   Enable Location
                 </>
               )}
@@ -103,16 +122,18 @@ const LocationPermissionModal = () => {
               className="w-full bg-gray-100 text-gray-800 py-3 rounded-lg 
                 hover:bg-gray-200 transition duration-300
                 flex items-center justify-center
-                focus:outline-none focus:ring-2 focus:ring-gray-300"
+                focus:outline-none focus:ring-2 focus:ring-gray-300
+                animate-slide-up-subtle delay-300"
             >
-              <MapPin className="mr-2" size={20} />
+              <Navigation className="mr-2" size={20} />
               Search Manually
             </button>
           </div>
 
           {/* Denied Permission Message */}
           {locationPermission === "denied" && (
-            <div className="mt-4 text-center text-red-500 flex items-center justify-center">
+            <div className="mt-4 text-center text-red-500 flex items-center justify-center 
+              animate-shake">
               <AlertCircle className="mr-2" size={20} />
               <p className="text-sm">
                 Location access was denied. Please enable in your browser
@@ -127,3 +148,4 @@ const LocationPermissionModal = () => {
 };
 
 export default LocationPermissionModal;
+

@@ -3,6 +3,50 @@ import { useParams, useNavigate } from "react-router-dom";
 import { ShoppingCart, Star, ChevronLeft } from "lucide-react";
 import useFetch from "../hooks/useFetch";
 
+// Skeleton Loader Component
+const ProductDetailsSkeleton = () => {
+  return (
+    <div className="container mx-auto px-4 sm:px-10 py-8 animate-pulse">
+      <div className="h-6 w-24 bg-gray-300 mb-4"></div>
+
+      <div className="grid md:grid-cols-2 gap-8">
+        {/* Image Skeleton */}
+        <div className="relative">
+          <div className="w-full h-96 bg-gray-300 rounded-lg"></div>
+          <div className="absolute top-4 right-4 bg-white rounded-full p-2 flex items-center">
+            <div className="h-5 w-12 bg-gray-300"></div>
+          </div>
+        </div>
+
+        {/* Details Skeleton */}
+        <div className="space-y-6">
+          <div>
+            <div className="h-10 w-3/4 bg-gray-300 mb-2"></div>
+            <div className="h-4 w-1/2 bg-gray-300"></div>
+          </div>
+
+          <div className="space-y-2">
+            <div className="h-4 w-full bg-gray-300"></div>
+            <div className="h-4 w-full bg-gray-300"></div>
+            <div className="h-4 w-3/4 bg-gray-300"></div>
+          </div>
+
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="h-8 w-24 bg-gray-300 mb-2"></div>
+              <div className="h-4 w-32 bg-gray-300"></div>
+            </div>
+
+            <div className="h-10 w-24 bg-gray-300 rounded-full"></div>
+          </div>
+
+          <div className="h-12 w-full bg-gray-300 rounded-lg"></div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const ProductDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -30,17 +74,13 @@ const ProductDetails = () => {
   };
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500"></div>
-      </div>
-    );
+    return <ProductDetailsSkeleton />;
   }
 
   if (error) {
     return (
       <div
-        className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+        className="bg-red-100 border border-red-400 text-red-700 px-4 sm:px-10 py-3 rounded relative"
         role="alert"
       >
         <strong className="font-bold">Error: </strong>
@@ -57,7 +97,7 @@ const ProductDetails = () => {
         </h2>
         <button
           onClick={handleBack}
-          className="flex items-center bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
+          className="flex items-center bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors"
         >
           <ChevronLeft className="mr-2" /> Back to Products
         </button>
@@ -66,7 +106,7 @@ const ProductDetails = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 sm:px-10 py-8">
       <button
         onClick={handleBack}
         className="flex items-center text-gray-600 hover:text-gray-800 mb-4"

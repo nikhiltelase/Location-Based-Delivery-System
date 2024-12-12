@@ -1,9 +1,26 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useLocation } from "../contexts/LocationContext";
 import { GoogleMap, Marker, Autocomplete } from "@react-google-maps/api";
-import { MapPin, Crosshair, Search, XCircle } from "lucide-react";
+import {
+  MapPin,
+  Crosshair,
+  Search,
+  XCircle,
+  AlertTriangle,
+} from "lucide-react";
 import useGoogleMapsScript from "../hooks/useGoogleMapsScript";
 
+const MapSkeleton = () => {
+  return (
+    <div className="relative w-full h-[500px] md:h-[600px] animate-pulse">
+      <div className="absolute top-4 left-4 right-4 z-10 flex space-x-2">
+        <div className="flex-grow h-12 bg-gray-300 rounded-lg"></div>
+        <div className="w-16 h-12 bg-gray-300 rounded-lg"></div>
+      </div>
+      <div className="w-full h-full bg-gray-200"></div>
+    </div>
+  );
+};
 
 const Map = () => {
   const {
@@ -20,38 +37,55 @@ const Map = () => {
   const { isLoaded, loadError } = useGoogleMapsScript(apiKey);
 
   const [searchQuery, setSearchQuery] = useState("");
+  const [addressError, setAddressError] = useState(null);
   const autocompleteRef = useRef(null);
   const mapRef = useRef(null);
 
   // Handle location selection from map click or marker drag
   const handleLocationSelect = async (lat, lng) => {
-    const location = { lat, lng };
-    setSelectedLocation(location);
+    try {
+      const location = { lat, lng };
+      setSelectedLocation(location);
+      setAddressError(null);
 
-    // Get address details
-    const address = await getAddressFromCoordinates(lat, lng);
-    setCurrentAddress(address);
+      // Get address details
+      const address = await getAddressFromCoordinates(lat, lng);
+      setCurrentAddress(address);
+    } catch (error) {
+      setAddressError("Unable to retrieve address details");
+      console.error("Location selection error:", error);
+    }
   };
 
   // Locate Me functionality
   const handleLocateMe = () => {
+    setAddressError(null);
     requestLocation();
   };
 
   // Handle autocomplete selection
   const handlePlaceSelect = () => {
-    const place = autocompleteRef.current.getPlace();
-    if (place.geometry) {
-      const lat = place.geometry.location.lat();
-      const lng = place.geometry.location.lng();
-      handleLocationSelect(lat, lng);
-      setSearchQuery(place.formatted_address || "");
+    try {
+      const place = autocompleteRef.current.getPlace();
+      if (place.geometry) {
+        const lat = place.geometry.location.lat();
+        const lng = place.geometry.location.lng();
+        handleLocationSelect(lat, lng);
+        setSearchQuery(place.formatted_address || "");
+        setAddressError(null);
+      } else {
+        setAddressError("Unable to find location details");
+      }
+    } catch (error) {
+      setAddressError("Error selecting location");
+      console.error("Place selection error:", error);
     }
   };
 
   // Clear search input
   const handleClearSearch = () => {
     setSearchQuery("");
+    setAddressError(null);
     if (autocompleteRef.current) {
       autocompleteRef.current.inputRef.current.value = "";
     }
@@ -67,15 +101,28 @@ const Map = () => {
 
   // Loading and error states
   if (loadError) {
-    return <div>Error loading Google Maps</div>;
+    return (
+      <div className="w-full h-[500px] md:h-[600px] flex items-center justify-center bg-red-50 rounded-lg p-4">
+        <div className="text-center">
+          <AlertTriangle className="mx-auto mb-4 text-red-500" size={48} />
+          <h2 className="text-xl font-semibold text-red-700 mb-2">
+            Map Loading Error
+          </h2>
+          <p className="text-red-600">
+            Unable to load Google Maps. Please check your internet connection.
+          </p>
+        </div>
+      </div>
+    );
   }
 
   if (!isLoaded) {
-    return <div>Loading map...</div>;
+    return <MapSkeleton />;
   }
 
   return (
-    <div className="relative w-full h-[500px] md:h-[600px] rounded-lg overflow-hidden shadow-lg">
+    <div className="relative w-full h-[500px] rounded-lg overflow-hidden shadow-lg">
+      {/* Search and Locate Me Section */}
       <div className="absolute top-4 left-4 right-4 z-10 flex space-x-2">
         {/* Autocomplete Search */}
         <div className="flex-grow relative">
@@ -92,7 +139,7 @@ const Map = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-10 pr-10 py-3 rounded-lg border border-gray-300 
-                  focus:outline-none focus:ring-2 focus:ring-blue-500 
+                  focus:outline-none focus:ring-2 focus:ring-green-500 
                   text-sm transition duration-300"
               />
               <Search
@@ -110,17 +157,25 @@ const Map = () => {
               )}
             </div>
           </Autocomplete>
+          {addressError && (
+            <div className="absolute top-full mt-1 w-full">
+              <div className="bg-red-100 border border-red-400 text-red-700 px-2 py-1 rounded text-xs flex items-center">
+                <AlertTriangle className="mr-2" size={16} />
+                {addressError}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Locate Me Button */}
         <button
           onClick={handleLocateMe}
-          className="bg-blue-500 text-white p-3 rounded-lg 
-            hover:bg-blue-600 transition duration-300 
-            flex items-center justify-center"
+          className="bg-green-500 text-white p-3 rounded-lg 
+            hover:bg-green-600 transition duration-300 
+            flex items-center justify-center group"
           aria-label="Use my current location"
         >
-          <Crosshair size={20} />
+          <Crosshair size={20} className="group-hover:animate-pulse" />
         </button>
       </div>
 
@@ -128,8 +183,7 @@ const Map = () => {
       <GoogleMap
         mapContainerClassName="w-full h-full"
         center={
-          selectedLocation ||
-          currentLocation || { lat: 20.5937, lng: 78.9629 }
+          selectedLocation || currentLocation || { lat: 20.5937, lng: 78.9629 }
         }
         zoom={15}
         onClick={(e) => handleLocationSelect(e.latLng.lat(), e.latLng.lng())}
@@ -137,6 +191,13 @@ const Map = () => {
           streetViewControl: false,
           mapTypeControl: false,
           fullscreenControl: false,
+          styles: [
+            {
+              featureType: "poi",
+              elementType: "labels",
+              stylers: [{ visibility: "off" }],
+            },
+          ],
         }}
       >
         {/* Draggable Marker */}
@@ -160,14 +221,24 @@ const Map = () => {
 
       {/* Selected Location Info */}
       {selectedLocation && (
-        <div className="absolute bottom-4 left-4 right-4 z-10">
-          <div className="bg-white p-4 rounded-lg shadow-lg flex items-center">
-            <MapPin className="mr-3 text-blue-500" size={24} />
-            <div>
-              <p className="text-sm font-medium text-gray-700">
-                Delivery Location
-              </p>
-              <p className="text-xs text-gray-500">{currentAddress}</p>
+        <div className="absolute bottom-0 sm:bottom-2 left-2 right-4 z-10">
+          <div
+            className="bg-white p-2 rounded-lg shadow-lg flex items-center 
+            transition-all duration-300 ease-in-out transform hover:scale-[1.02]"
+          >
+            <div className="flex justify-center items-center">
+              <MapPin className="mr-1 text-green-500" size={24} />
+              <div>
+                <p className="flex items-center gap-1 text-sm font-medium text-gray-700">
+                  Delivery Location
+                </p>
+                <p
+                  className="text-xs text-gray-500 truncate"
+                  title={currentAddress}
+                >
+                  {currentAddress}
+                </p>
+              </div>
             </div>
           </div>
         </div>

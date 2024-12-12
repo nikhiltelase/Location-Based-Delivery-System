@@ -1,12 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { useLocation } from "../contexts/LocationContext";
 import { useNavigate } from "react-router-dom";
+import { Map, MapPin, Home, Briefcase, Users, CheckCircle } from "lucide-react";
 
 const AddressForm = () => {
   const { selectedLocation } = useLocation();
   const navigate = useNavigate();
+  const inputRef = useRef(null);
   const [addressDetails, setAddressDetails] = useState({
     area: "",
     landmark: "",
@@ -15,6 +17,11 @@ const AddressForm = () => {
   });
   const [type, setType] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  // Focus first input on component mount
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -25,7 +32,7 @@ const AddressForm = () => {
   };
 
   const handleSaveAddress = async () => {
-    // Validate required fields
+    // Validation logic remains the same as in the original component
     if (
       !addressDetails.flatNumber ||
       !addressDetails.area ||
@@ -35,10 +42,6 @@ const AddressForm = () => {
       toast.error("Please fill in all required fields.", {
         position: "top-right",
         autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
       });
       return;
     }
@@ -70,10 +73,6 @@ const AddressForm = () => {
         toast.success("Address saved successfully!", {
           position: "top-right",
           autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
           onClose: () => {
             setAddressDetails({ area: "", landmark: "", flatNumber: "", type: "" });
             setType("");
@@ -85,10 +84,6 @@ const AddressForm = () => {
         toast.error(errorData.message || "Failed to save address. Please try again.", {
           position: "top-right",
           autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
         });
       }
     } catch (error) {
@@ -96,10 +91,6 @@ const AddressForm = () => {
       toast.error("An error occurred while saving the address.", {
         position: "top-right",
         autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
       });
     } finally {
       setIsLoading(false);
@@ -107,115 +98,134 @@ const AddressForm = () => {
   };
 
   const addressTypes = [
-    { name: "Home", icon: "🏠" },
-    { name: "Office", icon: "💼" },
-    { name: "Other", icon: "👥" },
+    { name: "Home", icon: Home, value: "home" },
+    { name: "Office", icon: Briefcase, value: "office" },
+    { name: "Other", icon: Users, value: "other" },
   ];
 
   return (
-    <div className="container mx-auto max-w-md px-2 py-6 sm:p-6 relative">
+    <div className="min- bg-gradient-to-br from-green-50 to-green-100 flex items-center justify-center sm:p-4">
       <ToastContainer />
-      <div className="bg-white shadow-md rounded-lg p-2 space-y-6">
-        {/* House/Flat/Block Number */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            House/Flat/Block No. <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            name="flatNumber"
-            value={addressDetails.flatNumber || ""}
-            onChange={handleInputChange}
-            placeholder="Enter house/flat number"
-            disabled={isLoading}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm 
-              focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 
-              transition-all duration-200 ease-in-out
-              disabled:opacity-50 disabled:cursor-not-allowed"
-          />
-        </div>
-
-        {/* Apartment/Road/Area */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Apartment/Road/Area <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            name="area"
-            value={addressDetails.area || ""}
-            onChange={handleInputChange}
-            placeholder="Enter apartment, road, area"
-            disabled={isLoading}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm 
-              focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 
-              transition-all duration-200 ease-in-out
-              disabled:opacity-50 disabled:cursor-not-allowed"
-          />
-        </div>
-
-        {/* Landmark */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Landmark <span className="text-gray-500">(Optional)</span>
-          </label>
-          <input
-            type="text"
-            name="landmark"
-            value={addressDetails.landmark || ""}
-            onChange={handleInputChange}
-            placeholder="Enter nearby landmark"
-            disabled={isLoading}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm 
-              focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 
-              transition-all duration-200 ease-in-out
-              disabled:opacity-50 disabled:cursor-not-allowed"
-          />
-        </div>
-
-        {/* Address Category Selection */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Save Address As <span className="text-red-500">*</span>
-          </label>
-          <div className="grid grid-cols-3 gap-3">
-            {addressTypes.map((item) => (
-              <button
-                key={item.name}
-                type="button"
-                onClick={() => !isLoading && setType(item.name.toLowerCase())}
-                disabled={isLoading}
-                className={`flex flex-col items-center justify-center p-3 rounded-md border 
-                  transition-all duration-200 ease-in-out
-                  ${
-                    type === item.name.toLowerCase()
-                      ? "bg-blue-500 text-white border-blue-600 shadow-md"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200 border-gray-300"
-                  }
-                  disabled:opacity-50 disabled:cursor-not-allowed`}
-              >
-                <span className="text-2xl mb-1">{item.icon}</span>
-                <span className="text-sm font-medium">{item.name}</span>
-              </button>
-            ))}
+      <div className="w-full bg-white shadow-2xl rounded-2xl overflow-hidden">
+       
+        
+        <div className="p-2 sm:p-6 space-y-6">
+          {/* Flat Number Input */}
+          <div>
+            <label className=" text-sm font-medium text-gray-700 mb-2 flex items-center">
+              House/Flat/Block No. 
+              <span className="text-red-500 ml-1">*</span>
+            </label>
+            <input
+              ref={inputRef}
+              type="text"
+              name="flatNumber"
+              value={addressDetails.flatNumber || ""}
+              onChange={handleInputChange}
+              placeholder="Enter house/flat number"
+              disabled={isLoading}
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl 
+                focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 
+                transition-all duration-300 ease-in-out
+                disabled:opacity-50 disabled:cursor-not-allowed
+                hover:border-green-300"
+            />
           </div>
-        </div>
 
-        {/* Save Address Button */}
-        <button
-          onClick={handleSaveAddress}
-          disabled={!type || isLoading}
-          className="w-full bg-green-500 text-white py-3 rounded-md 
-            hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2
-            disabled:opacity-50 disabled:cursor-not-allowed
-            transition-all duration-200 ease-in-out
-            flex items-center justify-center"
-        >
-          {isLoading ? (
-            <div className="animate-spin mr-2 h-5 w-5 border-b-2 border-white rounded-full"></div>
-          ) : null}
-          {isLoading ? "Saving..." : "Save Address"}
-        </button>
+          {/* Area Input */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center">
+              Apartment/Road/Area
+              <span className="text-red-500 ml-1">*</span>
+            </label>
+            <input
+              type="text"
+              name="area"
+              value={addressDetails.area || ""}
+              onChange={handleInputChange}
+              placeholder="Enter apartment, road, area"
+              disabled={isLoading}
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl 
+                focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 
+                transition-all duration-300 ease-in-out
+                disabled:opacity-50 disabled:cursor-not-allowed
+                hover:border-green-300"
+            />
+          </div>
+
+          {/* Landmark Input */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center">
+              Landmark 
+              <span className="text-gray-500 ml-1 text-xs">(Optional)</span>
+            </label>
+            <input
+              type="text"
+              name="landmark"
+              value={addressDetails.landmark || ""}
+              onChange={handleInputChange}
+              placeholder="Enter nearby landmark"
+              disabled={isLoading}
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl 
+                focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 
+                transition-all duration-300 ease-in-out
+                disabled:opacity-50 disabled:cursor-not-allowed
+                hover:border-green-300"
+            />
+          </div>
+
+          {/* Address Type Selection */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center">
+              Save Address As
+              <span className="text-red-500 ml-1">*</span>
+            </label>
+            <div className="grid grid-cols-3 gap-3">
+              {addressTypes.map((item) => (
+                <button
+                  key={item.name}
+                  type="button"
+                  onClick={() => !isLoading && setType(item.value)}
+                  disabled={isLoading}
+                  className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 
+                    transition-all duration-300 ease-in-out group
+                    ${
+                      type === item.value
+                        ? "bg-green-500 text-white border-green-600 shadow-lg"
+                        : "bg-white text-gray-700 hover:bg-green-50 border-gray-300 hover:border-green-300"
+                    }
+                    disabled:opacity-50 disabled:cursor-not-allowed`}
+                >
+                  <item.icon 
+                    className={`w-8 h-8 mb-2 
+                      ${type === item.value ? 'text-white' : 'text-green-500 group-hover:text-green-600'}
+                    `} 
+                  />
+                  <span className="text-sm font-medium">{item.name}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Save Address Button */}
+          <button
+            onClick={handleSaveAddress}
+            disabled={!type || isLoading}
+            className="w-full bg-green-500 text-white py-3.5 rounded-xl 
+              hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2
+              disabled:opacity-50 disabled:cursor-not-allowed
+              transition-all duration-300 ease-in-out
+              flex items-center justify-center
+              transform hover:scale-105 active:scale-95 shadow-md hover:shadow-lg"
+          >
+            {isLoading ? (
+              <div className="animate-spin mr-2 h-5 w-5 border-b-2 border-white rounded-full"></div>
+            ) : (
+              <CheckCircle className="mr-2 w-5 h-5" />
+            )}
+            {isLoading ? "Saving..." : "Save Address"}
+          </button>
+        </div>
       </div>
     </div>
   );
