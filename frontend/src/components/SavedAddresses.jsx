@@ -9,7 +9,7 @@ const SavedAddresses = () => {
     // Fetch addresses from the backend
     const fetchAddresses = async () => {
       try {
-        const response = await fetch("http://localhost:3000/address/get");
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/address/get`);
 
         if (!response.ok) {
           throw new Error("Failed to fetch addresses");
