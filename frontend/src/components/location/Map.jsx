@@ -35,7 +35,6 @@ const Map = () => {
 
   const apiKey = import.meta.env.VITE_GOOGLE_MAP_API_KEY;
   const { isLoaded, loadError } = useGoogleMapsScript(apiKey);
-
   const [searchQuery, setSearchQuery] = useState("");
   const [addressError, setAddressError] = useState(null);
   const autocompleteRef = useRef(null);

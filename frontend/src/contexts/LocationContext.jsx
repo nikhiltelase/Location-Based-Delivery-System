@@ -41,7 +41,6 @@ export const LocationProvider = ({ children }) => {
     });
   }, []);
 
-  // Geocoding placeholder (you'll need to implement actual geocoding)
   const getAddressFromCoordinates = async (lat, lng) => {
     try {
       const apiKey = import.meta.env.VITE_GOOGLE_MAP_API_KEY;
