@@ -16,7 +16,7 @@ const SpecialOffers = () => {
       gradient: "from-orange-400 to-pink-500",
       icon: Gift,
       bonus: "Extra dessert with order"
-    },
+    },  
     {
       id: 2,
       title: "First-Timer's Delight",

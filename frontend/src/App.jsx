@@ -9,11 +9,13 @@ import Cart from "./pages/CartPage";
 import ProfilePage from "./pages/ProfilePage";
 import Home from "./pages/Home";
 import SavedAddresses from "./components/profile/SavedAddresses";
+import { Toaster } from "react-hot-toast";
 
 const App = () => {
   return (
     <LocationProvider>
       <Router>
+        <Toaster />
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />

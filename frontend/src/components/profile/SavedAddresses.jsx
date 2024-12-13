@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { toast, ToastContainer } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from "react-hot-toast";
 import { Trash2, Edit2 } from "lucide-react";
 
 const AddressSkeletonLoader = () => {
@@ -39,10 +38,7 @@ const SavedAddresses = () => {
         setAddresses(data);
       } catch (err) {
         setError(err.message);
-        toast.error(`Failed to load addresses: ${err.message}`, {
-          position: "top-right",
-          autoClose: 3000,
-        });
+        toast.error(`Failed to load addresses: ${err.message}`);
       } finally {
         setLoading(false);
       }
@@ -66,25 +62,16 @@ const SavedAddresses = () => {
       }
 
       setAddresses((prev) => prev.filter((address) => address._id !== id));
-      toast.success("Address deleted successfully!", {
-        position: "top-right",
-        autoClose: 3000,
-      });
+      toast.success("Address deleted successfully!");
     } catch (err) {
-      toast.error(`Error deleting address: ${err.message}`, {
-        position: "top-right",
-        autoClose: 3000,
-      });
+      toast.error(`Error deleting address: ${err.message}`);
     } finally {
       setDeletingId(null);
     }
   };
 
   const handleEdit = (address) => {
-    toast.info("Edit functionality coming soon!", {
-      position: "top-right",
-      autoClose: 2000,
-    });
+    toast.info("Edit functionality coming soon!");
   };
 
   if (loading) {
@@ -132,7 +119,6 @@ const SavedAddresses = () => {
 
   return (
     <div className="p-14 mt-16">
-      <ToastContainer />
       <h3 className="text-lg font-semibold mb-4">Saved Addresses</h3>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {addresses.map((address) => (

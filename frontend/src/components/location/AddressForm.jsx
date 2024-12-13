@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
-import { toast, ToastContainer } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from "react-hot-toast";
 import { useLocation } from "../../contexts/LocationContext";
 import { useNavigate } from "react-router-dom";
-import { Map, MapPin, Home, Briefcase, Users, CheckCircle } from "lucide-react";
+import { Home, Briefcase, Users, CheckCircle } from "lucide-react";
+
 
 const AddressForm = () => {
   const { selectedLocation } = useLocation();
@@ -32,17 +32,14 @@ const AddressForm = () => {
   };
 
   const handleSaveAddress = async () => {
-    // Validation logic remains the same as in the original component
+    // Validation logic
     if (
       !addressDetails.flatNumber ||
       !addressDetails.area ||
       !selectedLocation ||
       !type
     ) {
-      toast.error("Please fill in all required fields.", {
-        position: "top-right",
-        autoClose: 3000,
-      });
+      toast.error("Please fill in all required fields.");
       return;
     }
 
@@ -70,28 +67,24 @@ const AddressForm = () => {
       );
 
       if (response.ok) {
-        toast.success("Address saved successfully!", {
-          position: "top-right",
-          autoClose: 3000,
-          onClose: () => {
-            setAddressDetails({ area: "", landmark: "", flatNumber: "", type: "" });
-            setType("");
-            navigate("/saved-addresses");
-          }
+        toast.success("Address saved successfully!");
+        setAddressDetails({
+          area: "",
+          landmark: "",
+          flatNumber: "",
+          type: "",
         });
+        setType("");
+        navigate("/saved-addresses");
       } else {
         const errorData = await response.json();
-        toast.error(errorData.message || "Failed to save address. Please try again.", {
-          position: "top-right",
-          autoClose: 3000,
-        });
+        toast.error(
+          errorData.message || "Failed to save address. Please try again."
+        );
       }
     } catch (error) {
       console.error("Error saving address:", error);
-      toast.error("An error occurred while saving the address.", {
-        position: "top-right",
-        autoClose: 3000,
-      });
+      toast.error("An error occurred while saving the address.");
     } finally {
       setIsLoading(false);
     }
@@ -105,15 +98,12 @@ const AddressForm = () => {
 
   return (
     <div className="min- bg-gradient-to-br from-green-50 to-green-100 flex items-center justify-center sm:p-4">
-      <ToastContainer />
       <div className="w-full bg-white shadow-2xl rounded-2xl overflow-hidden">
-       
-        
         <div className="p-2 sm:p-6 space-y-6">
           {/* Flat Number Input */}
           <div>
             <label className=" text-sm font-medium text-gray-700 mb-2 flex items-center">
-              House/Flat/Block No. 
+              House/Flat/Block No.
               <span className="text-red-500 ml-1">*</span>
             </label>
             <input
@@ -156,7 +146,7 @@ const AddressForm = () => {
           {/* Landmark Input */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center">
-              Landmark 
+              Landmark
               <span className="text-gray-500 ml-1 text-xs">(Optional)</span>
             </label>
             <input
@@ -196,10 +186,14 @@ const AddressForm = () => {
                     }
                     disabled:opacity-50 disabled:cursor-not-allowed`}
                 >
-                  <item.icon 
+                  <item.icon
                     className={`w-8 h-8 mb-2 
-                      ${type === item.value ? 'text-white' : 'text-green-500 group-hover:text-green-600'}
-                    `} 
+                      ${
+                        type === item.value
+                          ? "text-white"
+                          : "text-green-500 group-hover:text-green-600"
+                      }
+                    `}
                   />
                   <span className="text-sm font-medium">{item.name}</span>
                 </button>

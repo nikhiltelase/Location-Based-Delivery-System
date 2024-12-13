@@ -37,6 +37,7 @@ const ProductList = () => {
     loading,
     error,
   } = useFetch(`${import.meta.env.VITE_BACKEND_URL}/item/get`);
+  console.log(products);
 
   const handleClick = (e, productId) => {
     // Save the position of the clicked product before navigation
@@ -163,14 +164,12 @@ const ProductList = () => {
           className="flex flex-col items-center justify-center min-h-[400px] text-center"
         >
           <img
-            src="/api/placeholder/400/300"
-            alt="No Products"
+            src="https://www.searchenginejournal.com/wp-content/uploads/2020/04/335b76ca-14ff-46e1-99ea-ca92f550aaf5-5ea1dd86e8e38.jpeg"
+            alt="oops"
+            width={500}
             className="mb-6 opacity-50 rounded-xl"
           />
           <p className="text-3xl text-gray-500">No dishes match your search</p>
-          <p className="text-gray-400 mt-2">
-            Try a different search or reset the filter
-          </p>
         </motion.div>
       ) : (
         <motion.div
