@@ -1,9 +1,9 @@
-import express from 'express';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import connectDatabase from './config/database.js'; // Import database configuration
-import addressRoutes from './routes/addresses.js';
-import itemRoutes from './routes/itemRoutes.js';
+import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
+import connectDatabase from "./config/database.js"; // Import database configuration
+import addressRoutes from "./routes/addresses.js";
+import itemRoutes from "./routes/itemRoutes.js";
 
 dotenv.config(); // Load environment variables
 
@@ -18,12 +18,12 @@ app.use(express.json()); // Parse incoming JSON requests
 app.use(express.urlencoded({ extended: true })); // Parse incoming URL-encoded data
 
 // Routes
-app.use('/address', addressRoutes); // Address-related routes
-app.use('/item', itemRoutes); // Item-related routes
+app.use("/address", addressRoutes); // Address-related routes
+app.use("/item", itemRoutes); // Item-related routes
 
 // Root route for basic testing
-app.get('/', (req, res) => {
-  res.send('Server is running');
+app.get("/", (req, res) => {
+  res.send("Server is running");
 });
 
 // Start the server

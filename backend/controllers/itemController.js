@@ -1,13 +1,6 @@
 import Item from '../models/Item.js';
 
-/**
- * Get all items from the database.
- * @async
- * @function getAllItems
- * @param {Object} req - The request object.
- * @param {Object} res - The response object.
- * @returns {Promise<void>}
- */
+//Get all items from the database.
 export const getAllItems = async (req, res) => {
   try {
     const items = await Item.find();
@@ -17,14 +10,7 @@ export const getAllItems = async (req, res) => {
   }
 };
 
-/**
- * Create a new item in the database.
- * @async
- * @function createItems
- * @param {Object} req - The request object containing item data.
- * @param {Object} res - The response object.
- * @returns {Promise<void>}
- */
+//Create a new item in the database.
 export const createItems = async (req, res) => {
   try {
     const item = new Item(req.body);

@@ -1,13 +1,6 @@
 import { Address } from '../models/Address.js';
 
-/**
- * Get all addresses from the database.
- * @async
- * @function getAllAddresses
- * @param {Object} req - The request object.
- * @param {Object} res - The response object.
- * @returns {Promise<void>}
- */
+//Get all addresses from the database.
 export const getAllAddresses = async (req, res) => {
   try {
     const addresses = await Address.find().sort({ createdAt: -1 });
@@ -17,14 +10,7 @@ export const getAllAddresses = async (req, res) => {
   }
 };
 
-/**
- * Create a new address in the database.
- * @async
- * @function createAddress
- * @param {Object} req - The request object.
- * @param {Object} res - The response object.
- * @returns {Promise<void>}
- */
+//Create a new address in the database.
 export const createAddress = async (req, res) => {
   try {
     const address = new Address(req.body);
@@ -35,14 +21,7 @@ export const createAddress = async (req, res) => {
   }
 };
 
-/**
- * Update an existing address in the database.
- * @async
- * @function updateAddress
- * @param {Object} req - The request object.
- * @param {Object} res - The response object.
- * @returns {Promise<void>}
- */
+//Update an existing address in the database.
 export const updateAddress = async (req, res) => {
   try {
     const address = await Address.findByIdAndUpdate(
@@ -61,14 +40,7 @@ export const updateAddress = async (req, res) => {
   }
 };
 
-/**
- * Delete an address from the database.
- * @async
- * @function deleteAddress
- * @param {Object} req - The request object.
- * @param {Object} res - The response object.
- * @returns {Promise<void>}
- */
+//Delete an address from the database.
 export const deleteAddress = async (req, res) => {
   try {
     const address = await Address.findByIdAndDelete(req.params.id);
